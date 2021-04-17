@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.Dp
 import com.rittmann.leagueoflegendschamps.util.log
 
 /**
- * Code from https://gist.github.com/gildor/ff7f56da7216ae9e4da77368a4beb87a
+ * Code based from https://gist.github.com/gildor/ff7f56da7216ae9e4da77368a4beb87a
  * */
 
 /**

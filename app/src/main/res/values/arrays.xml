@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="champion_details_titles_array">
+        <item>Main</item>
+        <item>Lore</item>
+    </string-array>
+</resources>

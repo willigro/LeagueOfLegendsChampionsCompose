@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">LeagueOfLegendsChamps</string>
+    <string name="title_activity_champion_details">ChampionDetailsActivity</string>
+
+    <!-- Champion info -->
+    <string name="label_attack">Attack</string>
+    <string name="label_defense">Defense</string>
+    <string name="label_magic">Magic</string>
+    <string name="label_difficult">Difficulty</string>
+
+    <!-- Champion stats -->
+    <string name="label_selected_level" formatted="true">Current level</string>
+    <string name="label_hp">hp</string>
+    <string name="label_hpperlevel">hpperlevel</string>
+    <string name="label_mp">mp</string>
+    <string name="label_mpperlevel">mpperlevel</string>
+    <string name="label_movespeed">movespeed</string>
+    <string name="label_armor">armor</string>
+    <string name="label_armorperlevel">armorperlevel</string>
+    <string name="label_spellblock">spellblock</string>
+    <string name="label_spellblockperlevel">spellblockperlevel</string>
+    <string name="label_attackrange">attackrange</string>
+    <string name="label_hpregen">hpregen</string>
+    <string name="label_hpregenperlevel">hpregenperlevel</string>
+    <string name="label_mpregen">mpregen</string>
+    <string name="label_mpregenperlevel">mpregenperlevel</string>
+    <string name="label_crit">crit</string>
+    <string name="label_critperlevel">critperlevel</string>
+    <string name="label_attackdamage">attackdamage</string>
+    <string name="label_attackdamageperlevel">attackdamageperlevel</string>
+    <string name="label_attackspeedperlevel">attackspeedperlevel</string>
+    <string name="label_attackspeed">attackspeed</string>
+
+    <!-- Home -->
+    <string name="home_toolbar_title">Champions</string>
+
+    <!-- Home Filters -->
+    <string name="filter_by_name_hint">Champion Name</string>
+</resources>

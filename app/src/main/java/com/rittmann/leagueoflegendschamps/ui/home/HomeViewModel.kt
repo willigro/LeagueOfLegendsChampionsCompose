@@ -3,14 +3,13 @@ package com.rittmann.leagueoflegendschamps.ui.home
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.rittmann.leagueoflegendschamps.base.BaseViewModel
 import com.rittmann.leagueoflegendschamps.data.config.Constants.CHAMPIONS_NAMES
 import com.rittmann.leagueoflegendschamps.data.local.LocalChampionInfo
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampion
-import com.rittmann.leagueoflegendschamps.repositories.ChampionRepository
+import com.rittmann.leagueoflegendschamps.data.repositories.ChampionRepository
 import java.util.*
 import kotlinx.coroutines.flow.collect
 import kotlin.concurrent.schedule

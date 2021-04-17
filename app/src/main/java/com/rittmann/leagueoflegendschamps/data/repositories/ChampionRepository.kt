@@ -1,4 +1,4 @@
-package com.rittmann.leagueoflegendschamps.repositories
+package com.rittmann.leagueoflegendschamps.data.repositories
 
 import com.google.gson.JsonElement
 import com.rittmann.leagueoflegendschamps.data.model.RepositoryResource

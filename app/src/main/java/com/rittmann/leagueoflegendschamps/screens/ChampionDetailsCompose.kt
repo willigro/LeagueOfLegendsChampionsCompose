@@ -40,6 +40,7 @@ import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
+import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
@@ -48,6 +49,7 @@ import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
 import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
 import com.rittmann.leagueoflegendschamps.themes.ToolbarHeight
+import com.rittmann.leagueoflegendschamps.themes.UnselectedColor
 import com.rittmann.leagueoflegendschamps.util.log
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.launch
@@ -64,33 +66,10 @@ fun ChampionDetailsScreen(champion: Champion) {
                 var selectedTab by remember { mutableStateOf(columns.first()) }
 
                 Column(
-                    Modifier
-                        .verticalScroll(rememberScrollState())
+                    Modifier.verticalScroll(rememberScrollState())
                 ) {
 
-                    Row(modifier = Modifier.padding(TabPadding)) {
-
-                        columns.forEach {
-
-                            val selectedColor =
-                                if (selectedTab == it) MaterialTheme.colors.primary else Color.Transparent
-
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable {
-                                        selectedTab = it
-                                    }
-                                    .background(selectedColor)
-                            ) {
-                                Text(
-                                    text = it,
-                                    modifier = Modifier
-                                        .align(Alignment.CenterHorizontally)
-                                )
-                            }
-                        }
-                    }
+                    ChampionDetailsTabLayout(columns, selectedTab) { selectedTab = it }
 
                     when (selectedTab) {
                         columns[0] -> {
@@ -101,6 +80,62 @@ fun ChampionDetailsScreen(champion: Champion) {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ChampionDetailsTabLayout(
+    columns: Array<String>,
+    selectedTab: String,
+    selectedTabCallback: (String) -> Unit
+) {
+    BoxWithConstraints {
+        val contentPadding = TabPadding
+
+        val selectorWidth = (maxWidth  / columns.size) - contentPadding
+
+        val selectorAnimationTrigger =
+            remember { mutableStateOf(selectedTab) }
+        val selectorAnimationTransition = updateTransition(selectorAnimationTrigger)
+
+        val xPos by selectorAnimationTransition.animateDp {
+            selectorWidth * columns.indexOf(it.value)
+        }
+
+        Column(modifier = Modifier.padding(contentPadding)) {
+            Row {
+                columns.forEach {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+                                selectedTabCallback(it)
+                                selectorAnimationTrigger.value = it
+                            }
+                    ) {
+                        Text(
+                            text = it,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                        )
+
+                        HorizontalDivisor(
+                            color = UnselectedColor
+                        )
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                HorizontalSelector(
+                    modifier = Modifier.offset(x = xPos),
+                    color = Color.Red,
+                    width = selectorWidth
+                )
             }
         }
     }

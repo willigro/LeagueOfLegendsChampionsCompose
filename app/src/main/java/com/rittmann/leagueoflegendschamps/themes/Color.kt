@@ -21,6 +21,7 @@ val ChampionTagMarksmanColor = Color(0xFF9C27B0)
 val DivisorColor = Color(0xFF616161)
 val PlaceholderColor = Color(0xFF616161)
 val SelectedItemColor = Color(0xFF616161)
+val UnselectedColor = Color(0xFF5A4D4D)
 
 val BorderAnimationEndColor = Color(0xFFA29D76)
 val BorderAnimationInitialColor = Color(0xFF504A31)

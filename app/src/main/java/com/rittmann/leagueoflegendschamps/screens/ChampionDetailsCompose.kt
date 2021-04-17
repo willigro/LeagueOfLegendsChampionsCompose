@@ -106,12 +106,12 @@ fun ChampionDetailsMain(champion: Champion) {
                 val coroutineScope = rememberCoroutineScope()
 
                 val state: LazyListState = rememberLazyListState()
-                state.IsScrolling(
+                state.AddViewPagerListener(
                     count = champion.skins.size,
                     updatePage = { page ->
                         currentPage = page
                     },
-                    forceScroll = { page ->
+                    goTo = { page ->
                         coroutineScope.launch {
                             "go to $page".log()
                             currentPage = page
@@ -154,6 +154,9 @@ fun ChampionDetailsMain(champion: Champion) {
     }
 }
 
+/**
+ * Todo: export to a file
+ * */
 enum class ScrollingTo {
     LEFT, RIGHT, NONE
 }
@@ -162,20 +165,14 @@ var lastScrolling = ScrollingTo.NONE
 var lastPage = -1
 var waitingToChange = false
 
-/**
- * The problems:
- * previousIndex 10 lastPage 11 previousScrollOffset 741 layoutInfo 1080 isScrollInProgress true lastScrolling LEFT
- * previousIndex 10 lastPage 10 previousScrollOffset 698 layoutInfo 1080 isScrollInProgress true lastScrolling LEFT
- * */
 @Composable
-private fun LazyListState.IsScrolling(
+private fun LazyListState.AddViewPagerListener(
     count: Int,
     updatePage: (Int) -> Unit,
-    forceScroll: (Int) -> Unit
+    goTo: (Int) -> Unit
 ) {
     var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
     var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
-
 
     lastScrolling = when {
         firstVisibleItemScrollOffset > previousScrollOffset -> if (firstVisibleItemScrollOffset > layoutInfo.viewportEndOffset * .4) ScrollingTo.RIGHT else ScrollingTo.NONE
@@ -205,22 +202,22 @@ private fun LazyListState.IsScrolling(
             if (previousIndex != lastPage || waitingToChange)
                 if (previousIndex == 0) {
                     lastPage = 0
-                    forceScroll(0)
+                    goTo(0)
                 } else {
                     lastPage = previousIndex
-                    forceScroll(previousIndex)
+                    goTo(previousIndex)
                 }
         } else if (lastScrolling == ScrollingTo.RIGHT) {
             if (previousIndex == count - 1) {
                 lastPage = count
-                forceScroll(count)
+                goTo(count)
             } else {
                 lastPage = previousIndex + 1
-                forceScroll(previousIndex + 1)
+                goTo(previousIndex + 1)
             }
         } else {
             if (lastPage != -1)
-                forceScroll(lastPage)
+                goTo(lastPage)
         }
         waitingToChange = false
     }

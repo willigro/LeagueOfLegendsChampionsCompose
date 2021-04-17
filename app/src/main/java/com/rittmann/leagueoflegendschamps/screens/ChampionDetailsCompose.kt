@@ -30,17 +30,20 @@ import com.rittmann.leagueoflegendschamps.R
 import com.rittmann.leagueoflegendschamps.data.local.LocalChampionInfo
 import com.rittmann.leagueoflegendschamps.data.model.Champion
 import com.rittmann.leagueoflegendschamps.data.model.ChampionSkins
+import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionData
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionStats
 import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
+import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
 import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
+import com.rittmann.leagueoflegendschamps.themes.ToolbarHeight
 import com.rittmann.leagueoflegendschamps.util.log
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.launch
@@ -48,45 +51,50 @@ import kotlinx.coroutines.launch
 @Composable
 fun ChampionDetailsScreen(champion: Champion) {
     LeagueOfLegendsChampionsTheme {
-        SurfaceScreen {
-            val columns = stringArrayResource(R.array.champion_details_titles_array)
+        Scaffold(topBar = {
+            ChampionDetailsScreenToolbar(champion)
+        }) {
+            SurfaceScreen {
+                val columns = stringArrayResource(R.array.champion_details_titles_array)
 
-            var selectedTab by remember { mutableStateOf(columns.first()) }
+                var selectedTab by remember { mutableStateOf(columns.first()) }
 
-            Column(
-                Modifier
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Row(modifier = Modifier.padding(TabPadding)) {
+                Column(
+                    Modifier
+                        .verticalScroll(rememberScrollState())
+                ) {
 
-                    columns.forEach {
+                    Row(modifier = Modifier.padding(TabPadding)) {
 
-                        val selectedColor =
-                            if (selectedTab == it) MaterialTheme.colors.primary else Color.Transparent
+                        columns.forEach {
 
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clickable {
-                                    selectedTab = it
-                                }
-                                .background(selectedColor)
-                        ) {
-                            Text(
-                                text = it,
+                            val selectedColor =
+                                if (selectedTab == it) MaterialTheme.colors.primary else Color.Transparent
+
+                            Column(
                                 modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                            )
+                                    .weight(1f)
+                                    .clickable {
+                                        selectedTab = it
+                                    }
+                                    .background(selectedColor)
+                            ) {
+                                Text(
+                                    text = it,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterHorizontally)
+                                )
+                            }
                         }
                     }
-                }
 
-                when (selectedTab) {
-                    columns[0] -> {
-                        ChampionDetailsMain(champion)
-                    }
-                    columns[1] -> {
-                        ChampionDetailsLore(champion)
+                    when (selectedTab) {
+                        columns[0] -> {
+                            ChampionDetailsMain(champion)
+                        }
+                        columns[1] -> {
+                            ChampionDetailsLore(champion)
+                        }
                     }
                 }
             }
@@ -95,62 +103,105 @@ fun ChampionDetailsScreen(champion: Champion) {
 }
 
 @Composable
+fun ChampionDetailsScreenToolbar(champion: Champion) {
+    ConstraintLayout(
+        modifier = Modifier
+            .height(ToolbarHeight)
+            .fillMaxWidth()
+            .padding(
+                start = PatternNormalPadding,
+                end = PatternNormalPadding
+            )
+    ) {
+        val (title, divisor) = createRefs()
+        Text(text = champion.id,
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier
+                .constrainAs(title) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(divisor.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .padding(top = PatternNormalPadding)
+        )
+
+        HorizontalDivisor(modifier = Modifier
+            .constrainAs(divisor) {
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+        )
+
+    }
+}
+
+@Composable
 fun ChampionDetailsMain(champion: Champion) {
     lastPage = -1
     Column {
-        BoxWithConstraints {
-            val maxWidth = maxWidth
-            var currentPage by remember { mutableStateOf(0) }
+        ChampionDetailsImageSkinsViewPager(champion)
 
-            Column {
-                val coroutineScope = rememberCoroutineScope()
+        ChampionDetailsData(champion.resumedChampionData)
 
-                val state: LazyListState = rememberLazyListState()
-                state.AddViewPagerListener(
-                    count = champion.skins.size,
-                    updatePage = { page ->
-                        currentPage = page
-                    },
-                    goTo = { page ->
-                        coroutineScope.launch {
-                            "go to $page".log()
-                            currentPage = page
-                            state.animateScrollToItem(page)
-                        }
-                    }
-                )
+        ChampionDetailsStats(champion.resumedChampionStats)
+    }
+}
 
-                PageIndicator(
-                    currentPage = currentPage,
-                    numberOfPages = champion.skins.size
-                ) { page ->
+@Composable
+fun ChampionDetailsImageSkinsViewPager(champion: Champion) {
+    BoxWithConstraints {
+        val maxWidth = maxWidth
+        var currentPage by remember { mutableStateOf(0) }
+
+        Column {
+            val coroutineScope = rememberCoroutineScope()
+
+            val state: LazyListState = rememberLazyListState()
+            state.AddViewPagerListener(
+                count = champion.skins.size,
+                updatePage = { page ->
+                    currentPage = page
+                },
+                goTo = { page ->
                     coroutineScope.launch {
-                        state.animateScrollToItem(page)
+                        "go to $page".log()
                         currentPage = page
+                        state.animateScrollToItem(page)
                     }
                 }
+            )
 
-                championDetailsImageMaxHeight = 0.dp
-                LazyRow(
-                    state = state
-                ) {
-                    items(champion.skins) { skin ->
-                        ChampionDetailsImage(maxWidth, champion, skin)
-                    }
+            PageIndicator(
+                currentPage = currentPage,
+                numberOfPages = champion.skins.size
+            ) { page ->
+                coroutineScope.launch {
+                    state.animateScrollToItem(page)
+                    currentPage = page
+                }
+            }
+
+            championDetailsImageMaxHeight = 0.dp
+            LazyRow(
+                state = state
+            ) {
+                items(champion.skins) { skin ->
+                    ChampionDetailsImage(maxWidth, champion, skin)
                 }
             }
         }
+    }
+}
 
-        Text(text = champion.id)
-
-        with(champion.resumedChampionData) {
-            Text(text = "${stringResource(id = R.string.label_attack)} $attack")
-            Text(text = "${stringResource(id = R.string.label_defense)} $defense")
-            Text(text = "${stringResource(id = R.string.label_magic)} $magic")
-            Text(text = "${stringResource(id = R.string.label_difficult)} $difficulty")
-        }
-
-        ChampionDetailsStats(resumedChampionStats = champion.resumedChampionStats)
+@Composable
+fun ChampionDetailsData(resumedChampionData: ResumedChampionData) {
+    with(resumedChampionData) {
+        Text(text = "${stringResource(id = R.string.label_attack)} $attack")
+        Text(text = "${stringResource(id = R.string.label_defense)} $defense")
+        Text(text = "${stringResource(id = R.string.label_magic)} $magic")
+        Text(text = "${stringResource(id = R.string.label_difficult)} $difficulty")
     }
 }
 

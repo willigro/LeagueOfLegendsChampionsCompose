@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.rittmann.leagueoflegendschamps.base.livedata.SingleLiveEvent
 import com.rittmann.leagueoflegendschamps.data.model.RepositoryResource
 import kotlinx.coroutines.*
 import java.net.UnknownHostException

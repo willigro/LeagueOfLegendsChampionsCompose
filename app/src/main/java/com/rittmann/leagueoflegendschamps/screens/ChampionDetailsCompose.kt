@@ -13,12 +13,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlusOne
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.rittmann.leagueoflegendschamps.R
+import com.rittmann.leagueoflegendschamps.base.BaseActivity
 import com.rittmann.leagueoflegendschamps.data.local.LocalChampionInfo
 import com.rittmann.leagueoflegendschamps.data.model.Champion
 import com.rittmann.leagueoflegendschamps.data.model.ChampionSkins
@@ -43,6 +46,7 @@ import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
 import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
+import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
 import com.rittmann.leagueoflegendschamps.themes.ToolbarHeight
 import com.rittmann.leagueoflegendschamps.util.log
 import dev.chrisbanes.accompanist.coil.CoilImage
@@ -113,7 +117,7 @@ fun ChampionDetailsScreenToolbar(champion: Champion) {
                 end = PatternNormalPadding
             )
     ) {
-        val (title, divisor) = createRefs()
+        val (title, divisor, back) = createRefs()
         Text(text = champion.id,
             style = MaterialTheme.typography.h6,
             modifier = Modifier
@@ -134,6 +138,24 @@ fun ChampionDetailsScreenToolbar(champion: Champion) {
             }
         )
 
+        val context = LocalContext.current
+        IconButton(
+            modifier = Modifier
+                .size(TextFieldIconSize)
+                .constrainAs(back) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                },
+            onClick = {
+                (context as BaseActivity).finish()
+            }
+        ) {
+            Icon(
+                Icons.Outlined.ArrowBack,
+                contentDescription = null
+            )
+        }
     }
 }
 

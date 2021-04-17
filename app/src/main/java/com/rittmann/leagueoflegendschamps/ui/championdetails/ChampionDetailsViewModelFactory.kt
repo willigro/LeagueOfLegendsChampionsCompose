@@ -2,7 +2,7 @@ package com.rittmann.leagueoflegendschamps.ui.championdetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.rittmann.leagueoflegendschamps.repositories.ChampionRepository
+import com.rittmann.leagueoflegendschamps.data.repositories.ChampionRepository
 
 
 @Suppress("UNCHECKED_CAST")

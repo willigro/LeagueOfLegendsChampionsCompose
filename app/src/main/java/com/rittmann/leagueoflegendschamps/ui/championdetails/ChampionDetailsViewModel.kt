@@ -8,7 +8,7 @@ import com.google.gson.JsonObject
 import com.rittmann.leagueoflegendschamps.base.BaseViewModel
 import com.rittmann.leagueoflegendschamps.data.model.Champion
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampion
-import com.rittmann.leagueoflegendschamps.repositories.ChampionRepository
+import com.rittmann.leagueoflegendschamps.data.repositories.ChampionRepository
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 

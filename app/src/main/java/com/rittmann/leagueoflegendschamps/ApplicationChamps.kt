@@ -2,8 +2,8 @@ package com.rittmann.leagueoflegendschamps
 
 import android.app.Application
 import com.rittmann.leagueoflegendschamps.data.network.ChampionAPI
-import com.rittmann.leagueoflegendschamps.repositories.ChampionRepository
-import com.rittmann.leagueoflegendschamps.repositories.ChampionRepositoryImpl
+import com.rittmann.leagueoflegendschamps.data.repositories.ChampionRepository
+import com.rittmann.leagueoflegendschamps.data.repositories.ChampionRepositoryImpl
 import com.rittmann.leagueoflegendschamps.ui.championdetails.ChampionDetailsViewModelFactory
 import com.rittmann.leagueoflegendschamps.ui.home.HomeViewModelFactory
 import org.kodein.di.Kodein

@@ -1,4 +1,4 @@
-package com.rittmann.leagueoflegendschamps.base
+package com.rittmann.leagueoflegendschamps.base.livedata
 
 import android.util.Log
 import androidx.annotation.MainThread

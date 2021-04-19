@@ -598,12 +598,13 @@ fun ChampionDetailsImage(
                     }
                 })
     ) {
+        val height = maxWidth * .55f
         CoilImage(
+            modifier = Modifier.height(height),
             data = ImageUrls.getSplashUrl(champion.id, championSkins.num),
             contentDescription = "Picture from ${champion.id}",
             contentScale = ContentScale.Inside,
             loading = {
-                val height = maxWidth * .55f
 
                 ChampionImageLoading(
                     Modifier

@@ -39,13 +39,20 @@ import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
+import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadow
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
+import com.rittmann.leagueoflegendschamps.themes.ChampionDataAttackColor
+import com.rittmann.leagueoflegendschamps.themes.ChampionDataBorderStrokeWidth
+import com.rittmann.leagueoflegendschamps.themes.ChampionDataDefenceColor
+import com.rittmann.leagueoflegendschamps.themes.ChampionDataDifficultColor
+import com.rittmann.leagueoflegendschamps.themes.ChampionDataMagicColor
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
 import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
+import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
 import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
 import com.rittmann.leagueoflegendschamps.themes.ToolbarHeight
@@ -94,7 +101,7 @@ fun ChampionDetailsTabLayout(
     BoxWithConstraints {
         val contentPadding = TabPadding
 
-        val selectorWidth = (maxWidth  / columns.size) - contentPadding
+        val selectorWidth = (maxWidth / columns.size) - contentPadding
 
         val selectorAnimationTrigger =
             remember { mutableStateOf(selectedTab) }
@@ -254,11 +261,134 @@ fun ChampionDetailsImageSkinsViewPager(champion: Champion) {
 
 @Composable
 fun ChampionDetailsData(resumedChampionData: ResumedChampionData) {
-    with(resumedChampionData) {
-        Text(text = "${stringResource(id = R.string.label_attack)} $attack")
-        Text(text = "${stringResource(id = R.string.label_defense)} $defense")
-        Text(text = "${stringResource(id = R.string.label_magic)} $magic")
-        Text(text = "${stringResource(id = R.string.label_difficult)} $difficulty")
+    BoxWithConstraints {
+        val maxWidthToCircle = maxWidth / 4
+        Column {
+            ChampionDetailsDataCircleRow(
+                maxWidthToCircle = maxWidthToCircle,
+                dataOne = ChampionDetailsDataObject(
+                    stringResource(id = R.string.label_attack),
+                    resumedChampionData.attack,
+                    ChampionDataAttackColor
+                ),
+                dataTwo = ChampionDetailsDataObject(
+                    stringResource(id = R.string.label_magic),
+                    resumedChampionData.magic,
+                    ChampionDataMagicColor
+                )
+            )
+
+            ChampionDetailsDataCircleRow(
+                maxWidthToCircle = maxWidthToCircle,
+                dataOne = ChampionDetailsDataObject(
+                    stringResource(id = R.string.label_defense),
+                    resumedChampionData.defense,
+                    ChampionDataDefenceColor
+                ),
+                dataTwo = ChampionDetailsDataObject(
+                    stringResource(id = R.string.label_difficult),
+                    resumedChampionData.difficulty,
+                    ChampionDataDifficultColor
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun ChampionDetailsDataCircleRow(
+    maxWidthToCircle: Dp,
+    dataOne: ChampionDetailsDataObject,
+    dataTwo: ChampionDetailsDataObject,
+) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        val (left, right) = createRefs()
+        ChampionDetailsDataCircle(
+            Modifier.constrainAs(left) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(right.start)
+            },
+            maxWidthToCircle,
+            dataOne
+        )
+        ChampionDetailsDataCircle(
+            Modifier.constrainAs(right) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(left.end)
+                end.linkTo(parent.end)
+            },
+            maxWidthToCircle,
+            dataTwo
+        )
+    }
+}
+
+class ChampionDetailsDataObject(
+    val label: String,
+    val data: Int,
+    val color: Color
+)
+
+@Composable
+fun ChampionDetailsDataCircle(
+    modifier: Modifier = Modifier,
+    maxWidthToCircle: Dp,
+    data: ChampionDetailsDataObject
+) {
+    Column(
+        modifier = modifier
+            .padding(PatternSmallPadding),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = data.label,
+            style = MaterialTheme.typography.body2
+        )
+
+        ConstraintLayout(
+            modifier = Modifier.size(maxWidthToCircle)
+        ) {
+            val (progress, valueColumn) = createRefs()
+
+            CircularProgressWithShadow(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxSize()
+                    .constrainAs(progress) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                progress = data.data.toFloat() / 10,
+                color = data.color,
+                strokeWidth = (ChampionDataBorderStrokeWidth * data.data) / 10
+            )
+
+            Column(
+                modifier = Modifier
+                    .constrainAs(valueColumn) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = data.data.toString(),
+                    style = MaterialTheme.typography.h6,
+                )
+            }
+        }
     }
 }
 
@@ -643,7 +773,7 @@ fun LevelSelection(selectedLevel: (Int) -> Unit) {
                     onClick = { isOpen.value = true }
                 ),
             shape = CircleShape,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
+            color = MaterialTheme.colors.onSurface
         ) {
             Column(
                 modifier = Modifier

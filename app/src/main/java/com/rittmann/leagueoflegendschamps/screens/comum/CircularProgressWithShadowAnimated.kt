@@ -1,11 +1,15 @@
 package com.rittmann.leagueoflegendschamps.screens.comum
 
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -15,30 +19,43 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.rittmann.leagueoflegendschamps.util.log
 
 private val ShadowColor = Color(0xFF5A4D4D)
+private const val animationDelay = 1000
 
 @Composable
-fun CircularProgressWithShadow(
+fun CircularProgressWithShadowAnimated(
     /*@FloatRange(from = 0.0, to = 100.0)*/
     progress: Float,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.primary,
     strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth
 ) {
-    "$progress".log()
+    val borderInitialAnimationTrigger = remember { mutableStateOf(false) }
+    val dataProgress = updateTransition(borderInitialAnimationTrigger).animateFloat(
+        transitionSpec = {
+            tween(durationMillis = animationDelay)
+        }
+    ) {
+        if (it.value) progress else 0f
+    }
+
     val stroke = with(LocalDensity.current) {
         Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
     }
+
     Canvas(
         modifier.focusable()
     ) {
         // Start at 12 O'clock
         val startAngle = 270f
-        val sweep = progress * 360f
-        val shadow = (1.0 - progress).toFloat() * 360f
+        val sweep = dataProgress.value * 360f
+        val shadow = (1.0 - dataProgress.value).toFloat() * 360f
         drawCircularIndicatorWithShadow(startAngle, sweep, shadow, color, stroke)
+    }
+
+    if (progress > 0f && borderInitialAnimationTrigger.value.not()) {
+        borderInitialAnimationTrigger.value = true
     }
 }
 

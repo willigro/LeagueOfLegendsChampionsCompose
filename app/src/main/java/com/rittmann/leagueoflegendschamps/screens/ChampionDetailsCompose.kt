@@ -39,7 +39,7 @@ import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
-import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadow
+import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadowAnimated
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
@@ -357,7 +357,7 @@ fun ChampionDetailsDataCircle(
         ) {
             val (progress, valueColumn) = createRefs()
 
-            CircularProgressWithShadow(
+            CircularProgressWithShadowAnimated(
                 modifier = Modifier
                     .padding(10.dp)
                     .fillMaxSize()

@@ -20,5 +20,16 @@ object LocalChampionInfo {
         TagWithColor("Marksman", ChampionTagMarksmanColor)
     )
 
+    fun tagsToTagsWithColor(tags: List<String>): ArrayList<TagWithColor> {
+        return arrayListOf<TagWithColor>().apply {
+            tags.forEach {
+                for (tagWithColor in allAvailableTagsWithColor) {
+                    if (it == tagWithColor.tag)
+                        add(tagWithColor)
+                }
+            }
+        }
+    }
+
     data class TagWithColor(val tag: String, val color: Color)
 }

@@ -37,9 +37,9 @@ import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionData
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionStats
 import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
-import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
 import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadowAnimated
+import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
@@ -53,6 +53,7 @@ import com.rittmann.leagueoflegendschamps.themes.ChampionDataMagicColor
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
 import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding
+import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding_X
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
 import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
 import com.rittmann.leagueoflegendschamps.themes.ToolbarHeight
@@ -207,9 +208,33 @@ fun ChampionDetailsMain(champion: Champion) {
     Column {
         ChampionDetailsImageSkinsViewPager(champion)
 
+        ChampionDetailsTags(champion.resumedChampionTags)
+
         ChampionDetailsData(champion.resumedChampionData)
 
         ChampionDetailsStats(champion.resumedChampionStats)
+    }
+}
+
+@Composable
+fun ChampionDetailsTags(resumedChampionTags: List<String>) {
+    val tags = LocalChampionInfo.tagsToTagsWithColor(resumedChampionTags)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(PatternNormalPadding)
+    ) {
+        tags.forEach { tag ->
+            Text(
+                text = tag.tag,
+                style = MaterialTheme.typography.body2,
+                modifier = Modifier
+                    .padding(PatternSmallPadding_X)
+                    .background(tag.color)
+                    .padding(PatternSmallPadding)
+            )
+        }
     }
 }
 

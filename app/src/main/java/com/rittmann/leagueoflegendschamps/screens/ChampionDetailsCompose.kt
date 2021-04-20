@@ -995,24 +995,24 @@ fun ChampionDetailsStatsRow(
     ) {
         Text(
             text = dataOne.labelOne,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.body1,
         )
         Text(
             modifier = Modifier.championStatsValue(),
             text = dataOne.valueOne.toString(),
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.h6
         )
 
         Spacer(modifier = Modifier.height(SmallSpacer))
 
         Text(
             text = dataOne.labelTwo,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.body1,
         )
         Text(
             modifier = Modifier.championStatsValue(),
             text = dataOne.valueTwo.toString(),
-            style = MaterialTheme.typography.body1
+            style = MaterialTheme.typography.h6
         )
 
         dataTwo?.also { dataTwo ->
@@ -1020,24 +1020,24 @@ fun ChampionDetailsStatsRow(
 
             Text(
                 text = dataTwo.labelOne,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.body1,
             )
             Text(
                 modifier = Modifier.championStatsValue(),
                 text = dataTwo.valueOne.toString(),
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.h6
             )
 
             Spacer(modifier = Modifier.height(SmallSpacer))
 
             Text(
                 text = dataTwo.labelTwo,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.body1,
             )
             Text(
                 modifier = Modifier.championStatsValue(),
                 text = dataTwo.valueTwo.toString(),
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.h6
             )
         }
     }

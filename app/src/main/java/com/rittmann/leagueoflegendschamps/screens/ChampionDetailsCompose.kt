@@ -1,5 +1,6 @@
 package com.rittmann.leagueoflegendschamps.screens
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlusOne
@@ -35,6 +37,7 @@ import com.rittmann.leagueoflegendschamps.data.model.ChampionSkins
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionData
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionStats
 import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
+import com.rittmann.leagueoflegendschamps.screens.comum.Border
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
 import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadowAnimated
@@ -43,12 +46,17 @@ import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
+import com.rittmann.leagueoflegendschamps.screens.comum.borderBySides
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
+import com.rittmann.leagueoflegendschamps.themes.BorderAnimationInitialColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataAttackColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataBorderStrokeWidth
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataDefenceColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataDifficultColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataMagicColor
+import com.rittmann.leagueoflegendschamps.themes.ChampionDetailsStatsBoxCorners
+import com.rittmann.leagueoflegendschamps.themes.ChampionTagSupportColor
+import com.rittmann.leagueoflegendschamps.themes.DefaultBorderStrokeWidth
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
 import com.rittmann.leagueoflegendschamps.themes.LevelSelectorSize
 import com.rittmann.leagueoflegendschamps.themes.NormalSpacer
@@ -56,7 +64,6 @@ import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding_X
 import com.rittmann.leagueoflegendschamps.themes.PlaceholderColor
-import com.rittmann.leagueoflegendschamps.themes.SectionBoxTitleBackground
 import com.rittmann.leagueoflegendschamps.themes.SmallSpacer
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
 import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
@@ -668,45 +675,89 @@ fun ChampionDetailsStats(resumedChampionStats: ResumedChampionStats) {
     with(resumedChampionStats) {
         setLevel(currentLevel)
 
-        ChampionVitalityStats(this)
+        ChampionDetailsVitalityStats(this)
 
         ChampionDetailsResistanceStats(this)
 
-        Text(text = "${stringResource(id = R.string.label_movespeed)} $movespeed")
-        Text(text = "${stringResource(id = R.string.label_attackrange)} $attackrange")
-        Text(text = "${stringResource(id = R.string.label_crit)} ${crit.getByLevel(critperlevel)}")
-        Text(text = "${stringResource(id = R.string.label_critperlevel)} $critperlevel")
-        Text(
-            text = "${stringResource(id = R.string.label_attackdamage)} ${
-                attackdamage.getByLevel(
-                    attackdamageperlevel
+        ChampionDetailsAttackStats(this)
+    }
+}
+
+@Composable
+fun ChampionDetailsAttackStats(resumedChampionStats: ResumedChampionStats) {
+    ChampionDetailsVitalityExpandableBox(
+        title = stringResource(id = R.string.champion_damage),
+        titleBackground = ChampionDataAttackColor
+    ) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = PatternNormalPadding)
+        ) {
+            val (left, right) = createRefs()
+
+            with(resumedChampionStats) {
+                ChampionDetailsStatsRow(
+                    modifier = Modifier.constrainAs(left) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(right.start)
+                    },
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.champion_damage),
+                        attackdamage.getByLevel(attackdamageperlevel),
+                        stringResource(id = R.string.label_attackdamageperlevel),
+                        attackdamageperlevel
+                    ),
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_attackspeed),
+                        attackspeed.getByLevel(attackspeedperlevel),
+                        stringResource(id = R.string.label_attackspeedperlevel),
+                        attackspeedperlevel
+                    )
                 )
-            }"
-        )
-        Text(text = "${stringResource(id = R.string.label_attackdamageperlevel)} $attackdamageperlevel")
-        Text(
-            text = "${stringResource(id = R.string.label_attackspeed)} ${
-                attackspeed.getByLevel(
-                    attackspeedperlevel
+
+                ChampionDetailsStatsRow(
+                    modifier = Modifier.constrainAs(right) {
+                        start.linkTo(left.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+                    },
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_crit),
+                        crit.getByLevel(critperlevel),
+                        stringResource(id = R.string.label_critperlevel),
+                        critperlevel
+                    ),
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_movespeed),
+                        movespeed,
+                        stringResource(id = R.string.label_attackrange),
+                        attackrange
+                    )
                 )
-            }"
-        )
-        Text(text = "${stringResource(id = R.string.label_attackspeedperlevel)} $attackspeedperlevel")
+            }
+        }
     }
 }
 
 @Composable
 fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
     ChampionDetailsVitalityExpandableBox(
-        title = stringResource(id = R.string.champion_resistance)
+        title = stringResource(id = R.string.champion_resistance),
+        titleBackground = ChampionDataDefenceColor
     ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = PatternNormalPadding)
         ) {
             val (left, right) = createRefs()
 
             with(resumedChampionStats) {
-                ChampionVitalityStatsRow(
+                ChampionDetailsStatsRow(
                     modifier = Modifier.constrainAs(left) {
                         start.linkTo(parent.start)
                         top.linkTo(parent.top)
@@ -722,7 +773,7 @@ fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
                     null
                 )
 
-                ChampionVitalityStatsRow(
+                ChampionDetailsStatsRow(
                     modifier = Modifier.constrainAs(right) {
                         start.linkTo(left.end)
                         top.linkTo(parent.top)
@@ -745,34 +796,56 @@ fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
 @Composable
 fun ChampionDetailsVitalityExpandableBox(
     title: String,
+    titleBackground: Color,
     composable: @Composable () -> Unit
 ) {
     var expanded by remember { mutableStateOf(true) }
 
-    Column(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(PatternNormalPadding)
+            .animateContentSize()
             .clickable {
                 expanded = !expanded
-            },
-        horizontalAlignment = Alignment.CenterHorizontally
+            }
+            .padding(PatternNormalPadding),
+        shape = RoundedCornerShape(
+            topStart = ChampionDetailsStatsBoxCorners, topEnd = ChampionDetailsStatsBoxCorners
+        )
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(SectionBoxTitleBackground)
-                .padding(PatternSmallPadding),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.h6
-            )
-        }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(titleBackground)
+                    .padding(PatternSmallPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.h6
+                )
+            }
 
-        if (expanded)
-            composable()
+            if (expanded) {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .borderBySides(
+                            start = Border(DefaultBorderStrokeWidth, BorderAnimationInitialColor),
+                            end = Border(DefaultBorderStrokeWidth, BorderAnimationInitialColor),
+                            bottom = Border(DefaultBorderStrokeWidth, BorderAnimationInitialColor)
+                        )
+                ) {
+                    composable()
+                }
+            }
+        }
     }
 }
 
@@ -784,16 +857,19 @@ class ChampionDetailsVitalityUiModel(
 )
 
 @Composable
-fun ChampionVitalityStats(resumedChampionStats: ResumedChampionStats) {
+fun ChampionDetailsVitalityStats(resumedChampionStats: ResumedChampionStats) {
     ChampionDetailsVitalityExpandableBox(
-        title = stringResource(id = R.string.champion_vitality)
+        title = stringResource(id = R.string.champion_vitality),
+        titleBackground = ChampionTagSupportColor
     ) {
         with(resumedChampionStats) {
             ConstraintLayout(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = PatternNormalPadding)
             ) {
                 val (left, right) = createRefs()
-                ChampionVitalityStatsRow(
+                ChampionDetailsStatsRow(
                     modifier = Modifier.constrainAs(left) {
                         start.linkTo(parent.start)
                         top.linkTo(parent.top)
@@ -814,7 +890,7 @@ fun ChampionVitalityStats(resumedChampionStats: ResumedChampionStats) {
                     )
                 )
 
-                ChampionVitalityStatsRow(
+                ChampionDetailsStatsRow(
                     modifier = Modifier.constrainAs(right) {
                         end.linkTo(parent.end)
                         top.linkTo(parent.top)
@@ -839,8 +915,10 @@ fun ChampionVitalityStats(resumedChampionStats: ResumedChampionStats) {
     }
 }
 
+fun Modifier.championStatsValue() = this.padding(PatternSmallPadding)
+
 @Composable
-fun ChampionVitalityStatsRow(
+fun ChampionDetailsStatsRow(
     modifier: Modifier,
     dataOne: ChampionDetailsVitalityUiModel,
     dataTwo: ChampionDetailsVitalityUiModel?
@@ -854,6 +932,7 @@ fun ChampionVitalityStatsRow(
             style = MaterialTheme.typography.h6,
         )
         Text(
+            modifier = Modifier.championStatsValue(),
             text = dataOne.valueOne.toString(),
             style = MaterialTheme.typography.body1
         )
@@ -865,6 +944,7 @@ fun ChampionVitalityStatsRow(
             style = MaterialTheme.typography.h6,
         )
         Text(
+            modifier = Modifier.championStatsValue(),
             text = dataOne.valueTwo.toString(),
             style = MaterialTheme.typography.body1
         )
@@ -877,6 +957,7 @@ fun ChampionVitalityStatsRow(
                 style = MaterialTheme.typography.h6,
             )
             Text(
+                modifier = Modifier.championStatsValue(),
                 text = dataTwo.valueOne.toString(),
                 style = MaterialTheme.typography.body1
             )
@@ -888,6 +969,7 @@ fun ChampionVitalityStatsRow(
                 style = MaterialTheme.typography.h6,
             )
             Text(
+                modifier = Modifier.championStatsValue(),
                 text = dataTwo.valueTwo.toString(),
                 style = MaterialTheme.typography.body1
             )

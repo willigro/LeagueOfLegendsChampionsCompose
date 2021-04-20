@@ -11,27 +11,28 @@
     <!-- Champion stats -->
     <string name="champion_vitality">Vitality</string>
     <string name="champion_resistance">Resistance</string>
+    <string name="champion_damage">Damage</string>
     <string name="label_selected_level" formatted="true">Current level</string>
-    <string name="label_hp">hp</string>
-    <string name="label_hpperlevel">hpperlevel</string>
-    <string name="label_mp">mp</string>
-    <string name="label_mpperlevel">mpperlevel</string>
-    <string name="label_movespeed">movespeed</string>
-    <string name="label_armor">armor</string>
-    <string name="label_armorperlevel">armorperlevel</string>
-    <string name="label_spellblock">spellblock</string>
-    <string name="label_spellblockperlevel">spellblockperlevel</string>
-    <string name="label_attackrange">attackrange</string>
-    <string name="label_hpregen">hpregen</string>
-    <string name="label_hpregenperlevel">hpregenperlevel</string>
-    <string name="label_mpregen">mpregen</string>
-    <string name="label_mpregenperlevel">mpregenperlevel</string>
-    <string name="label_crit">crit</string>
-    <string name="label_critperlevel">critperlevel</string>
-    <string name="label_attackdamage">attackdamage</string>
-    <string name="label_attackdamageperlevel">attackdamageperlevel</string>
-    <string name="label_attackspeedperlevel">attackspeedperlevel</string>
-    <string name="label_attackspeed">attackspeed</string>
+    <string name="label_hp">HP</string>
+    <string name="label_hpperlevel">HP p/l</string>
+    <string name="label_mp">MP</string>
+    <string name="label_mpperlevel">MP p/l</string>
+    <string name="label_movespeed">Move speed</string>
+    <string name="label_armor">Armor</string>
+    <string name="label_armorperlevel">Armor p/l</string>
+    <string name="label_spellblock">Magic resistance</string>
+    <string name="label_spellblockperlevel">MR p/l</string>
+    <string name="label_attackrange">Attack Range</string>
+    <string name="label_hpregen">HP regen</string>
+    <string name="label_hpregenperlevel">HP p/l</string>
+    <string name="label_mpregen">MP regen</string>
+    <string name="label_mpregenperlevel">MP regen p/l</string>
+    <string name="label_crit">Critic</string>
+    <string name="label_critperlevel">Critic p/l</string>
+    <string name="label_attackdamage">Attack</string>
+    <string name="label_attackdamageperlevel">Attack p/l</string>
+    <string name="label_attackspeedperlevel">Attack speed p/l</string>
+    <string name="label_attackspeed">Attack speed</string>
 
     <!-- Home -->
     <string name="home_toolbar_title">Champions</string>

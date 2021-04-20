@@ -32,6 +32,8 @@ val LevelSelectorSize = 50.dp
 val NormalSpacer = 10.dp
 val SmallSpacer = 5.dp
 
+val ChampionDetailsStatsBoxCorners = 20f
+
 fun Modifier.allSmallPaddings() = this.padding(
     LeftSmallPadding,
     TopSmallPadding,

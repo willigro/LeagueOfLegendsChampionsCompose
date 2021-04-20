@@ -3,11 +3,13 @@ package com.rittmann.leagueoflegendschamps.screens.comum
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.rittmann.leagueoflegendschamps.util.log
 
 /**
@@ -25,6 +27,14 @@ data class BorderAnimTwo(
     val strokeWidth: Dp,
     val color: Color,
     val path: List<Dp>,
+    val draw: Boolean,
+    val start: (Float) -> Unit
+)
+
+data class BorderAnimThree(
+    val strokeWidth: Dp,
+    val color: Color,
+    val path: List<FromTo>,
     val draw: Boolean,
     val start: (Float) -> Unit
 )
@@ -220,7 +230,7 @@ fun Modifier.borderAnim(
 
     // to Top start
     val hToTop = animTwo.path[2].toPx()
-    val height = if(hToTop > size.height) size.height else hToTop
+    val height = if (hToTop > size.height) size.height else hToTop
 
     drawPath(
         Path().apply {
@@ -264,4 +274,60 @@ fun Modifier.borderAnim(
         color = animTwo.color,
         style = stroke
     )
+}
+
+enum class PositionBorderAnim(val value: Dp) {
+    START_BOTTOM((-0.1).dp), END_BOTTOM((-0.2).dp), END_TOP((-0.3).dp)
+}
+
+class FromTo(
+    val from: Pair<Dp, Dp>,
+    val to: Pair<Dp, Dp>,
+)
+
+@Stable
+fun Modifier.borderAnim(
+    anim: BorderAnimThree
+) = drawBehind {
+    anim.start(size.height)
+
+    val stroke = Stroke(width = anim.strokeWidth.toPx())
+
+    if (anim.draw.not()) return@drawBehind
+
+    for (path in anim.path) {
+        val xFrom = getX(path.from.first, size)
+        val yFrom = getY(path.from.second, size)
+
+        val xTo = getX(path.to.first, size)
+        val yTo = getY(path.to.second, size)
+
+        drawPath(
+            Path().apply {
+                moveTo(xFrom, yFrom)
+                lineTo(xTo, yTo)
+                close()
+            },
+            color = anim.color,
+            style = stroke
+        )
+    }
+}
+
+fun getX(value: Dp, size: Size): Float {
+    return when (value) {
+        PositionBorderAnim.START_BOTTOM.value -> 0f
+        PositionBorderAnim.END_BOTTOM.value -> size.width
+        PositionBorderAnim.END_TOP.value -> size.width
+        else -> value.value
+    }
+}
+
+fun getY(value: Dp, size: Size): Float {
+    return when (value) {
+        PositionBorderAnim.START_BOTTOM.value -> size.height
+        PositionBorderAnim.END_BOTTOM.value -> size.height
+        PositionBorderAnim.END_TOP.value -> 0f
+        else -> value.value
+    }
 }

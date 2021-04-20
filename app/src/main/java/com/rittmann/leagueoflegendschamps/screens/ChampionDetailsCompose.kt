@@ -37,18 +37,18 @@ import com.rittmann.leagueoflegendschamps.data.model.ChampionSkins
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionData
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampionStats
 import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
-import com.rittmann.leagueoflegendschamps.screens.comum.Border
+import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimThree
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
 import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadowAnimated
 import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
+import com.rittmann.leagueoflegendschamps.screens.comum.FromTo
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
+import com.rittmann.leagueoflegendschamps.screens.comum.PositionBorderAnim
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
-import com.rittmann.leagueoflegendschamps.screens.comum.borderBySides
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
-import com.rittmann.leagueoflegendschamps.themes.BorderAnimationInitialColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataAttackColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataBorderStrokeWidth
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataDefenceColor
@@ -799,7 +799,7 @@ fun ChampionDetailsVitalityExpandableBox(
     titleBackground: Color,
     composable: @Composable () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -832,15 +832,81 @@ fun ChampionDetailsVitalityExpandableBox(
             }
 
             if (expanded) {
+                val draw = remember { mutableStateOf(false) }
+                val height = remember { mutableStateOf(0.dp) }
+                val transitionStartEnd = updateTransition(draw)
+                val transitionBottom = updateTransition(draw)
 
+                val xPos by transitionBottom.animateDp(
+                    transitionSpec = {
+                        tween(durationMillis = championDetailsImageBorderAnimationDelay)
+                    }) {
+                    if (it.value) PositionBorderAnim.END_BOTTOM.value else 0.dp
+                }
+
+                val yPos by transitionStartEnd.animateDp(
+                    transitionSpec = {
+                        tween(durationMillis = championDetailsImageBorderAnimationDelay)
+                    }) {
+                    if (it.value) height.value else 0.dp
+                }
+
+                val path = arrayListOf<FromTo>().apply {
+                    // Start
+                    add(
+                        FromTo(
+                            Pair(
+                                0.dp,
+                                0.dp
+                            ),
+                            Pair(
+                                0.dp,
+                                yPos
+                            )
+                        )
+                    )
+
+                    // End
+                    add(
+                        FromTo(
+                            Pair(
+                                PositionBorderAnim.END_TOP.value,
+                                0.dp
+                            ),
+                            Pair(
+                                PositionBorderAnim.END_TOP.value,
+                                yPos
+                            )
+                        )
+                    )
+
+                    // Bottom
+                    add(
+                        FromTo(
+                            Pair(
+                                0.dp,
+                                PositionBorderAnim.START_BOTTOM.value,
+                            ),
+                            Pair(
+                                xPos,
+                                PositionBorderAnim.START_BOTTOM.value
+                            )
+                        )
+                    )
+                }
+
+                val border = BorderAnimThree(
+                    DefaultBorderStrokeWidth, BorderAnimationEndColor, path, draw.value
+                ) {
+                    if (it > 0f && height.value == 0.dp) {
+                        height.value = it.dp
+                        draw.value = true
+                    }
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .borderBySides(
-                            start = Border(DefaultBorderStrokeWidth, BorderAnimationInitialColor),
-                            end = Border(DefaultBorderStrokeWidth, BorderAnimationInitialColor),
-                            bottom = Border(DefaultBorderStrokeWidth, BorderAnimationInitialColor)
-                        )
+                        .borderAnim(border)
                 ) {
                     composable()
                 }

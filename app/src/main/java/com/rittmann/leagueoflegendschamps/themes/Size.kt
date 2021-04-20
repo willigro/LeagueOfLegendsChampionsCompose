@@ -27,6 +27,11 @@ val TextFieldIconSize = 18.dp
 
 val ToolbarHeight = 80.dp
 
+val LevelSelectorSize = 50.dp
+
+val NormalSpacer = 10.dp
+val SmallSpacer = 5.dp
+
 fun Modifier.allSmallPaddings() = this.padding(
     LeftSmallPadding,
     TopSmallPadding,

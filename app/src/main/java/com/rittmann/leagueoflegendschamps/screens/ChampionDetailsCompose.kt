@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,9 +50,14 @@ import com.rittmann.leagueoflegendschamps.themes.ChampionDataDefenceColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataDifficultColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataMagicColor
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
+import com.rittmann.leagueoflegendschamps.themes.LevelSelectorSize
+import com.rittmann.leagueoflegendschamps.themes.NormalSpacer
 import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding_X
+import com.rittmann.leagueoflegendschamps.themes.PlaceholderColor
+import com.rittmann.leagueoflegendschamps.themes.SectionBoxTitleBackground
+import com.rittmann.leagueoflegendschamps.themes.SmallSpacer
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
 import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
 import com.rittmann.leagueoflegendschamps.themes.ToolbarHeight
@@ -291,12 +295,12 @@ fun ChampionDetailsData(resumedChampionData: ResumedChampionData) {
         Column {
             ChampionDetailsDataCircleRow(
                 maxWidthToCircle = maxWidthToCircle,
-                dataOne = ChampionDetailsDataObject(
+                dataOne = ChampionDetailsDataUiModel(
                     stringResource(id = R.string.label_attack),
                     resumedChampionData.attack,
                     ChampionDataAttackColor
                 ),
-                dataTwo = ChampionDetailsDataObject(
+                dataTwo = ChampionDetailsDataUiModel(
                     stringResource(id = R.string.label_magic),
                     resumedChampionData.magic,
                     ChampionDataMagicColor
@@ -305,12 +309,12 @@ fun ChampionDetailsData(resumedChampionData: ResumedChampionData) {
 
             ChampionDetailsDataCircleRow(
                 maxWidthToCircle = maxWidthToCircle,
-                dataOne = ChampionDetailsDataObject(
+                dataOne = ChampionDetailsDataUiModel(
                     stringResource(id = R.string.label_defense),
                     resumedChampionData.defense,
                     ChampionDataDefenceColor
                 ),
-                dataTwo = ChampionDetailsDataObject(
+                dataTwo = ChampionDetailsDataUiModel(
                     stringResource(id = R.string.label_difficult),
                     resumedChampionData.difficulty,
                     ChampionDataDifficultColor
@@ -323,8 +327,8 @@ fun ChampionDetailsData(resumedChampionData: ResumedChampionData) {
 @Composable
 fun ChampionDetailsDataCircleRow(
     maxWidthToCircle: Dp,
-    dataOne: ChampionDetailsDataObject,
-    dataTwo: ChampionDetailsDataObject,
+    dataOne: ChampionDetailsDataUiModel,
+    dataTwo: ChampionDetailsDataUiModel,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -354,7 +358,7 @@ fun ChampionDetailsDataCircleRow(
     }
 }
 
-class ChampionDetailsDataObject(
+class ChampionDetailsDataUiModel(
     val label: String,
     val data: Int,
     val color: Color
@@ -364,7 +368,7 @@ class ChampionDetailsDataObject(
 fun ChampionDetailsDataCircle(
     modifier: Modifier = Modifier,
     maxWidthToCircle: Dp,
-    data: ChampionDetailsDataObject
+    data: ChampionDetailsDataUiModel
 ) {
     Column(
         modifier = modifier
@@ -666,6 +670,8 @@ fun ChampionDetailsStats(resumedChampionStats: ResumedChampionStats) {
 
         ChampionVitalityStats(this)
 
+        ChampionDetailsResistanceStats(this)
+
         Text(text = "${stringResource(id = R.string.label_movespeed)} $movespeed")
         Text(text = "${stringResource(id = R.string.label_attackrange)} $attackrange")
         Text(text = "${stringResource(id = R.string.label_crit)} ${crit.getByLevel(critperlevel)}")
@@ -690,62 +696,201 @@ fun ChampionDetailsStats(resumedChampionStats: ResumedChampionStats) {
 }
 
 @Composable
-fun ChampionVitalityStats(resumedChampionStats: ResumedChampionStats) {
-    with(resumedChampionStats) {
-        Row {
-            Image(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp),
-                painter = painterResource(id = R.drawable.shield_icon),
-                contentDescription = null
+fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
+    ChampionDetailsVitalityExpandableBox(
+        title = stringResource(id = R.string.champion_resistance)
+    ) {
+        ConstraintLayout(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val (left, right) = createRefs()
+
+            with(resumedChampionStats) {
+                ChampionVitalityStatsRow(
+                    modifier = Modifier.constrainAs(left) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(right.start)
+                    },
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_armor),
+                        armor.getByLevel(armorperlevel),
+                        stringResource(id = R.string.label_armorperlevel),
+                        armorperlevel
+                    ),
+                    null
+                )
+
+                ChampionVitalityStatsRow(
+                    modifier = Modifier.constrainAs(right) {
+                        start.linkTo(left.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+                    },
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_spellblock),
+                        spellblock.getByLevel(spellblockperlevel),
+                        stringResource(id = R.string.label_spellblockperlevel),
+                        spellblockperlevel
+                    ),
+                    null
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ChampionDetailsVitalityExpandableBox(
+    title: String,
+    composable: @Composable () -> Unit
+) {
+    var expanded by remember { mutableStateOf(true) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(PatternNormalPadding)
+            .clickable {
+                expanded = !expanded
+            },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(SectionBoxTitleBackground)
+                .padding(PatternSmallPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.h6
             )
         }
 
-        Column {
-            Text(text = "${stringResource(id = R.string.label_hp)} ${hp.getByLevel(hpperlevel)}")
-            Text(text = "${stringResource(id = R.string.label_hpperlevel)} $hpperlevel")
+        if (expanded)
+            composable()
+    }
+}
 
-            Text(
-                text = "${stringResource(id = R.string.label_hpregen)} ${
-                    hpregen.getByLevel(
+class ChampionDetailsVitalityUiModel(
+    val labelOne: String,
+    val valueOne: Float,
+    val labelTwo: String,
+    val valueTwo: Float
+)
+
+@Composable
+fun ChampionVitalityStats(resumedChampionStats: ResumedChampionStats) {
+    ChampionDetailsVitalityExpandableBox(
+        title = stringResource(id = R.string.champion_vitality)
+    ) {
+        with(resumedChampionStats) {
+            ConstraintLayout(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val (left, right) = createRefs()
+                ChampionVitalityStatsRow(
+                    modifier = Modifier.constrainAs(left) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(right.start)
+                    },
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_hp),
+                        hp.getByLevel(hpperlevel),
+                        stringResource(id = R.string.label_hpperlevel),
+                        hpperlevel
+                    ),
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_hpregen),
+                        hpregen.getByLevel(hpregenperlevel),
+                        stringResource(id = R.string.label_hpregenperlevel),
                         hpregenperlevel
                     )
-                }"
-            )
-            Text(text = "${stringResource(id = R.string.label_hpregenperlevel)} $hpregenperlevel")
+                )
 
-
-            Text(text = "${stringResource(id = R.string.label_mp)} ${mp.getByLevel(mpperlevel)}")
-            Text(text = "${stringResource(id = R.string.label_mpperlevel)} $mpperlevel")
-
-            Text(
-                text = "${stringResource(id = R.string.label_mpregen)} ${
-                    mpregen.getByLevel(
+                ChampionVitalityStatsRow(
+                    modifier = Modifier.constrainAs(right) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(left.end)
+                    },
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_mp),
+                        mp.getByLevel(mpperlevel),
+                        stringResource(id = R.string.label_mpperlevel),
+                        mpperlevel
+                    ),
+                    ChampionDetailsVitalityUiModel(
+                        stringResource(id = R.string.label_mpregen),
+                        mpregen.getByLevel(mpregenperlevel),
+                        stringResource(id = R.string.label_mpregenperlevel),
                         mpregenperlevel
                     )
-                }"
-            )
-            Text(text = "${stringResource(id = R.string.label_mpregenperlevel)} $mpregenperlevel")
+                )
+            }
+        }
+    }
+}
 
+@Composable
+fun ChampionVitalityStatsRow(
+    modifier: Modifier,
+    dataOne: ChampionDetailsVitalityUiModel,
+    dataTwo: ChampionDetailsVitalityUiModel?
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = dataOne.labelOne,
+            style = MaterialTheme.typography.h6,
+        )
+        Text(
+            text = dataOne.valueOne.toString(),
+            style = MaterialTheme.typography.body1
+        )
+
+        Spacer(modifier = Modifier.height(SmallSpacer))
+
+        Text(
+            text = dataOne.labelTwo,
+            style = MaterialTheme.typography.h6,
+        )
+        Text(
+            text = dataOne.valueTwo.toString(),
+            style = MaterialTheme.typography.body1
+        )
+
+        dataTwo?.also { dataTwo ->
+            Spacer(modifier = Modifier.height(NormalSpacer))
 
             Text(
-                text = "${stringResource(id = R.string.label_armor)} ${
-                    armor.getByLevel(
-                        armorperlevel
-                    )
-                }"
+                text = dataTwo.labelOne,
+                style = MaterialTheme.typography.h6,
             )
-            Text(text = "${stringResource(id = R.string.label_armorperlevel)} $armorperlevel")
+            Text(
+                text = dataTwo.valueOne.toString(),
+                style = MaterialTheme.typography.body1
+            )
+
+            Spacer(modifier = Modifier.height(SmallSpacer))
 
             Text(
-                text = "${stringResource(id = R.string.label_spellblock)} ${
-                    spellblock.getByLevel(
-                        spellblockperlevel
-                    )
-                }"
+                text = dataTwo.labelTwo,
+                style = MaterialTheme.typography.h6,
             )
-            Text(text = "${stringResource(id = R.string.label_spellblockperlevel)} $spellblockperlevel")
+            Text(
+                text = dataTwo.valueTwo.toString(),
+                style = MaterialTheme.typography.body1
+            )
         }
     }
 }
@@ -765,7 +910,6 @@ fun ChampionDetailsScreenPreview() {
 fun LevelSelection(selectedLevel: (Int) -> Unit) {
     val levels = LocalChampionInfo.levels
 
-
     val currentSelectedLevel = remember { mutableStateOf("1") } // initial value
     val isOpen = remember { mutableStateOf(false) } // initial value
     val openCloseOfDropDownList: (Boolean) -> Unit = {
@@ -779,14 +923,18 @@ fun LevelSelection(selectedLevel: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(PatternNormalPadding),
+        horizontalArrangement = Arrangement.Center
     ) {
+
         /**
          * Current level label
          * */
         Text(
             text = stringResource(id = R.string.label_selected_level),
+            style = MaterialTheme.typography.body2,
             modifier = Modifier
-                .padding(PatternNormalPadding)
+                .padding(top = PatternNormalPadding, bottom = PatternNormalPadding)
         )
 
         /**
@@ -794,12 +942,13 @@ fun LevelSelection(selectedLevel: (Int) -> Unit) {
          * */
         Surface(
             modifier = Modifier
-                .size(50.dp)
+                .padding(start = PatternNormalPadding, end = PatternNormalPadding)
+                .size(LevelSelectorSize)
                 .clickable(
                     onClick = { isOpen.value = true }
                 ),
             shape = CircleShape,
-            color = MaterialTheme.colors.onSurface
+            color = PlaceholderColor
         ) {
             Column(
                 modifier = Modifier
@@ -809,22 +958,26 @@ fun LevelSelection(selectedLevel: (Int) -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = currentSelectedLevel.value
+                    text = currentSelectedLevel.value,
+                    style = MaterialTheme.typography.h6,
                 )
             }
         }
-
         /**
          * Add levels
          * */
-        IconButton(onClick = {
-            var level = currentSelectedLevel.value.toInt()
-            if (level < levels.last().toInt()) {
-                level++
-                selectedLevel(level)
-                currentSelectedLevel.value = level.toString()
-            }
-        }) {
+        IconButton(
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .background(color = MaterialTheme.colors.primaryVariant),
+            onClick = {
+                var level = currentSelectedLevel.value.toInt()
+                if (level < levels.last().toInt()) {
+                    level++
+                    selectedLevel(level)
+                    currentSelectedLevel.value = level.toString()
+                }
+            }) {
             Icon(
                 Icons.Filled.PlusOne,
                 contentDescription = null

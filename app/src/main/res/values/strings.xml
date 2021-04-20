@@ -9,6 +9,8 @@
     <string name="label_difficult">Difficulty</string>
 
     <!-- Champion stats -->
+    <string name="champion_vitality">Vitality</string>
+    <string name="champion_resistance">Resistance</string>
     <string name="label_selected_level" formatted="true">Current level</string>
     <string name="label_hp">hp</string>
     <string name="label_hpperlevel">hpperlevel</string>

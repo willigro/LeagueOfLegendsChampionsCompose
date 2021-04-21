@@ -56,11 +56,11 @@ import com.rittmann.leagueoflegendschamps.R
 import com.rittmann.leagueoflegendschamps.data.local.LocalChampionInfo
 import com.rittmann.leagueoflegendschamps.data.model.ResumedChampion
 import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
+import com.rittmann.leagueoflegendschamps.screens.comum.AvatarImageLoading
 import com.rittmann.leagueoflegendschamps.screens.comum.Border
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnim
 import com.rittmann.leagueoflegendschamps.screens.comum.ConnectionErrorScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
-import com.rittmann.leagueoflegendschamps.screens.comum.AvatarImageLoading
 import com.rittmann.leagueoflegendschamps.screens.comum.Rows
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
 import com.rittmann.leagueoflegendschamps.screens.comum.borderBySides
@@ -128,15 +128,15 @@ fun HomeScreenContent(
                     yPos = it
                 }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    if (yPos == 0.dp)
+                if (yPos == 0.dp)
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         ResumedChampionList(
                             list = list,
                             onClickSelectedChampion = onClickSelectedChampion
                         )
-                }
+                    }
             }
         }
     }

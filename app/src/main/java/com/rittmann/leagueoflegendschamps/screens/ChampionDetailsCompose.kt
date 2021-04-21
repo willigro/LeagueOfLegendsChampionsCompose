@@ -2,6 +2,7 @@ package com.rittmann.leagueoflegendschamps.screens
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.*
@@ -20,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -47,8 +49,10 @@ import com.rittmann.leagueoflegendschamps.screens.comum.FromTo
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalDivisor
 import com.rittmann.leagueoflegendschamps.screens.comum.HorizontalSelector
 import com.rittmann.leagueoflegendschamps.screens.comum.PositionBorderAnim
+import com.rittmann.leagueoflegendschamps.screens.comum.ShimmerOnce
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
+import com.rittmann.leagueoflegendschamps.screens.comum.shimmer
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
 import com.rittmann.leagueoflegendschamps.themes.BorderLevelColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataAttackColor
@@ -689,6 +693,7 @@ fun ChampionDetailsStats(resumedChampionStats: ResumedChampionStats) {
 @Composable
 fun ChampionDetailsAttackStats(resumedChampionStats: ResumedChampionStats) {
     ChampionDetailsVitalityExpandableBox(
+        currentLevel = resumedChampionStats.currentLevel,
         title = stringResource(id = R.string.champion_damage),
         titleBackground = ChampionDataAttackColor
     ) {
@@ -749,6 +754,7 @@ fun ChampionDetailsAttackStats(resumedChampionStats: ResumedChampionStats) {
 @Composable
 fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
     ChampionDetailsVitalityExpandableBox(
+        currentLevel = resumedChampionStats.currentLevel,
         title = stringResource(id = R.string.champion_resistance),
         titleBackground = ChampionDataDefenceColor
     ) {
@@ -772,6 +778,7 @@ fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
                         armor.getByLevel(armorperlevel),
                         stringResource(id = R.string.label_armorperlevel),
                         armorperlevel
+
                     ),
                     null
                 )
@@ -798,6 +805,7 @@ fun ChampionDetailsResistanceStats(resumedChampionStats: ResumedChampionStats) {
 
 @Composable
 fun ChampionDetailsVitalityExpandableBox(
+    currentLevel: Int,
     title: String,
     titleBackground: Color,
     composable: @Composable () -> Unit
@@ -821,10 +829,35 @@ fun ChampionDetailsVitalityExpandableBox(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val anim = remember { mutableStateOf(0f) }
+            var currentLevelRemember by remember { mutableStateOf(1) }
+            val transition = updateTransition(anim)
+
+            val currentOffSet = transition.animateFloat(
+                transitionSpec = {
+                    tween(durationMillis = if (currentLevel == currentLevelRemember) 10 else 1000)
+                }
+            ) {
+                if (currentLevel == currentLevelRemember) 0f else anim.value
+            }
+
+            if (currentOffSet.value == anim.value && currentLevel != currentLevelRemember)
+                currentLevelRemember = currentLevel
+
+            val shimmer = ShimmerOnce(
+                offset = Offset(currentOffSet.value, 0f),
+                alpha = if (currentLevel == currentLevelRemember) 0f else 1f,
+                execute = {
+                    if (anim.value == 0f) {
+                        anim.value = it.width
+                    }
+                })
+            
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(titleBackground)
+                    .shimmer(shimmer)
                     .padding(PatternSmallPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -928,6 +961,7 @@ class ChampionDetailsVitalityUiModel(
 @Composable
 fun ChampionDetailsVitalityStats(resumedChampionStats: ResumedChampionStats) {
     ChampionDetailsVitalityExpandableBox(
+        resumedChampionStats.currentLevel,
         title = stringResource(id = R.string.champion_vitality),
         titleBackground = ChampionTagSupportColor
     ) {

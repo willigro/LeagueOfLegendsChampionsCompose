@@ -12,6 +12,11 @@ val BlackBackground = Color(0xFF10121B)
 val LoadingBackground = Color(0xFF616161)
 val SectionBoxTitleBackground = Color(0xFF616161)
 
+val ShimmerColors = listOf(
+    Color(0xFFA8A8A8),
+    Color.Transparent
+)
+
 val ChampionTagFighterColor = Color(0xFFCC800E)
 val ChampionTagSupportColor = Color(0xFF009688)
 val ChampionTagMageColor = Color(0xFF2196F3)

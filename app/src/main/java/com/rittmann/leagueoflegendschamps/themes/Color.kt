@@ -31,7 +31,7 @@ val ChampionDataDifficultColor = Color(0xFFE91E1E)
 
 val DivisorColor = Color(0xFF616161)
 val PlaceholderColor = Color(0xFF616161)
-val SelectedItemColor = Color(0xFF616161)
+val SelectedItemColor = Color(0xFF9B7143)
 val UnselectedColor = Color(0xFF5A4D4D)
 
 val BorderAnimationEndColor = Color(0xFFA29D76)

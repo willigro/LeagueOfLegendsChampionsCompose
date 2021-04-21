@@ -70,7 +70,7 @@ import com.rittmann.leagueoflegendschamps.themes.NormalSpacer
 import com.rittmann.leagueoflegendschamps.themes.PatternNormalPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding
 import com.rittmann.leagueoflegendschamps.themes.PatternSmallPadding_X
-import com.rittmann.leagueoflegendschamps.themes.PlaceholderColor
+import com.rittmann.leagueoflegendschamps.themes.SelectedItemColor
 import com.rittmann.leagueoflegendschamps.themes.SmallSpacer
 import com.rittmann.leagueoflegendschamps.themes.TabPadding
 import com.rittmann.leagueoflegendschamps.themes.TextFieldIconSize
@@ -143,6 +143,7 @@ fun ChampionDetailsTabLayout(
                     ) {
                         Text(
                             text = it,
+                            style = MaterialTheme.typography.subtitle1,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
                         )
@@ -648,19 +649,19 @@ private fun PageIndicator(
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-        }) {
+        }, horizontalArrangement = Arrangement.Center) {
             repeat(times = numberOfPages) { page ->
                 val circleColor = if (page == currentPage) {
-                    Color.Red
+                    SelectedItemColor
                 } else {
                     MaterialTheme.colors.onSecondary
                 }
                 Box(
                     modifier = Modifier
-                        .padding(end = 8.dp)
+                        .padding(end = 10.dp)
                         .clip(shape = CircleShape)
                         .background(color = circleColor)
-                        .size(8.dp)
+                        .size(9.dp)
                         .clickable {
                             selectedPage(page)
                         }
@@ -852,7 +853,7 @@ fun ChampionDetailsVitalityExpandableBox(
                         anim.value = it.width
                     }
                 })
-            
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

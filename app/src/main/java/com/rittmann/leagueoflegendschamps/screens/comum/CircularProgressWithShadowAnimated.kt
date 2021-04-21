@@ -59,6 +59,29 @@ fun CircularProgressWithShadowAnimated(
     }
 }
 
+@Composable
+fun CircularProgressWithShadow(
+    /*@FloatRange(from = 0.0, to = 100.0)*/
+    progress: Float,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colors.primary,
+    strokeWidth: Dp = ProgressIndicatorDefaults.StrokeWidth
+) {
+    val stroke = with(LocalDensity.current) {
+        Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
+    }
+
+    Canvas(
+        modifier.focusable()
+    ) {
+        // Start at 12 O'clock
+        val startAngle = 270f
+        val sweep = progress * 360f
+        val shadow = (1.0 - progress).toFloat() * 360f
+        drawCircularIndicatorWithShadow(startAngle, sweep, shadow, color, stroke)
+    }
+}
+
 private fun DrawScope.drawCircularIndicatorWithShadow(
     startAngle: Float,
     sweep: Float,

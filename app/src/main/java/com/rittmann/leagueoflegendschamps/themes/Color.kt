@@ -31,3 +31,4 @@ val UnselectedColor = Color(0xFF5A4D4D)
 
 val BorderAnimationEndColor = Color(0xFFA29D76)
 val BorderAnimationInitialColor = Color(0xFF504A31)
+val BorderLevelColor = Color(0xFF2196F3)

@@ -40,6 +40,7 @@ import com.rittmann.leagueoflegendschamps.data.network.ImageUrls
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimThree
 import com.rittmann.leagueoflegendschamps.screens.comum.BorderAnimTwo
 import com.rittmann.leagueoflegendschamps.screens.comum.ChampionImageLoading
+import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadow
 import com.rittmann.leagueoflegendschamps.screens.comum.CircularProgressWithShadowAnimated
 import com.rittmann.leagueoflegendschamps.screens.comum.DropDownListHorizontal
 import com.rittmann.leagueoflegendschamps.screens.comum.FromTo
@@ -49,12 +50,14 @@ import com.rittmann.leagueoflegendschamps.screens.comum.PositionBorderAnim
 import com.rittmann.leagueoflegendschamps.screens.comum.SurfaceScreen
 import com.rittmann.leagueoflegendschamps.screens.comum.borderAnim
 import com.rittmann.leagueoflegendschamps.themes.BorderAnimationEndColor
+import com.rittmann.leagueoflegendschamps.themes.BorderLevelColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataAttackColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataBorderStrokeWidth
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataDefenceColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataDifficultColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDataMagicColor
 import com.rittmann.leagueoflegendschamps.themes.ChampionDetailsStatsBoxCorners
+import com.rittmann.leagueoflegendschamps.themes.ChampionLevelBorderStrokeWidth
 import com.rittmann.leagueoflegendschamps.themes.ChampionTagSupportColor
 import com.rittmann.leagueoflegendschamps.themes.DefaultBorderStrokeWidth
 import com.rittmann.leagueoflegendschamps.themes.LeagueOfLegendsChampionsTheme
@@ -1088,28 +1091,42 @@ fun LevelSelection(selectedLevel: (Int) -> Unit) {
         /**
          * Open the dropDown and show the current level
          * */
-        Surface(
+        ConstraintLayout(
             modifier = Modifier
                 .padding(start = PatternNormalPadding, end = PatternNormalPadding)
                 .size(LevelSelectorSize)
                 .clickable(
-                    onClick = { isOpen.value = true }
-                ),
-            shape = CircleShape,
-            color = PlaceholderColor
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = currentSelectedLevel.value,
-                    style = MaterialTheme.typography.h6,
+                    onClick = { isOpen.value = !isOpen.value }
                 )
-            }
+        ) {
+            val (progress, value) = createRefs()
+            val maxLevel = levels.last().toFloat()
+            val currentLevel = currentSelectedLevel.value.toFloat()
+            CircularProgressWithShadow(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .constrainAs(progress) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                progress = currentLevel / maxLevel,
+                color = BorderLevelColor,
+                strokeWidth = (ChampionLevelBorderStrokeWidth * currentLevel) / maxLevel
+            )
+            Text(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .constrainAs(value) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                text = currentSelectedLevel.value,
+                style = MaterialTheme.typography.h6,
+            )
         }
         /**
          * Add levels
@@ -1140,6 +1157,7 @@ fun LevelSelection(selectedLevel: (Int) -> Unit) {
         requestToOpen = isOpen.value,
         list = levels,
         openCloseOfDropDownList,
+        currentSelectedLevel.value,
         userSelectedString
     )
 }

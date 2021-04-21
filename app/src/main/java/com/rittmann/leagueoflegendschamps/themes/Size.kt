@@ -22,6 +22,7 @@ val ChampionAvatarImageDefaultSize = 48.dp
 val ChampionAvatarBorder = 2.dp
 val DefaultBorderStrokeWidth = 1.dp
 val ChampionDataBorderStrokeWidth = 10.dp
+val ChampionLevelBorderStrokeWidth = 5.dp
 
 val TextFieldIconSize = 18.dp
 

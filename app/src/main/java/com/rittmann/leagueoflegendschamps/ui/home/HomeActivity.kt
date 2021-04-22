@@ -26,6 +26,7 @@ class HomeActivity : BaseActivity(), KodeinAware {
             val context = LocalContext.current
 
             HomeScreen(
+                window,
                 errorConnection = homeViewModel.errorCon,
                 errorConnectionRetry = ::getAllChampions,
                 list = homeViewModel.championList,

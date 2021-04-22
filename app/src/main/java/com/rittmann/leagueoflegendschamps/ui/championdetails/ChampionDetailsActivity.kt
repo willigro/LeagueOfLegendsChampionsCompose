@@ -29,7 +29,7 @@ class ChampionDetailsActivity : BaseActivity() {
         championDetailsViewModel.getChampionBy(resumedChampion)
 
         setContent {
-            ChampionDetailsScreen(championDetailsViewModel.champion)
+            ChampionDetailsScreen(window, championDetailsViewModel.champion)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.rittmann.leagueoflegendschamps.screens
 
+import android.view.Window
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
@@ -27,7 +28,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -81,8 +81,8 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.launch
 
 @Composable
-fun ChampionDetailsScreen(champion: Champion) {
-    LeagueOfLegendsChampionsTheme {
+fun ChampionDetailsScreen(window: Window, champion: Champion) {
+    LeagueOfLegendsChampionsTheme(window) {
         Scaffold(topBar = {
             ChampionDetailsScreenToolbar(champion)
         }) {
@@ -1084,12 +1084,6 @@ fun ChampionDetailsStatsRow(
 @Composable
 fun ChampionDetailsLore(champion: Champion) {
     Text(text = champion.lore)
-}
-
-@Preview
-@Composable
-fun ChampionDetailsScreenPreview() {
-    ChampionDetailsScreen(Champion())
 }
 
 @Composable

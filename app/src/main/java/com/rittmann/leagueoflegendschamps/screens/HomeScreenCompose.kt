@@ -1,5 +1,6 @@
 package com.rittmann.leagueoflegendschamps.screens
 
+import android.view.Window
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
@@ -83,6 +84,7 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 @ExperimentalFoundationApi
 @Composable
 fun HomeScreen(
+    windows: Window,
     errorConnection: Boolean,
     errorConnectionRetry: () -> Unit,
     list: List<ResumedChampion>,
@@ -90,7 +92,7 @@ fun HomeScreen(
     onChampionNameChanged: (String) -> Unit,
     onClickSelectedChampion: (ResumedChampion) -> Unit
 ) {
-    LeagueOfLegendsChampionsTheme {
+    LeagueOfLegendsChampionsTheme(windows){
         Scaffold(
             topBar = {
                 BoxWithConstraints {

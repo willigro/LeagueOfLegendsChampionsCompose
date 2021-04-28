@@ -26,7 +26,7 @@ private const val animationDelay = 1000
 
 @Composable
 fun CircularProgressWithShadowAnimated(
-    /*@FloatRange(from = 0.0, to = 100.0)*/
+    /*@FloatRange(from = 0.0, to = 1.0)*/
     progress: Float,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.primary,

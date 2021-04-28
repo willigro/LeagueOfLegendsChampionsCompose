@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
@@ -45,7 +46,9 @@ fun CircularProgressWithShadowAnimated(
     }
 
     Canvas(
-        modifier.focusable()
+        modifier
+            .progressSemantics(progress)
+            .focusable()
     ) {
         // Start at 12 O'clock
         val startAngle = 270f

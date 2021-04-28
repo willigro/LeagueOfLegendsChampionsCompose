@@ -64,7 +64,7 @@ fun CircularProgressWithShadowAnimated(
 
 @Composable
 fun CircularProgressWithShadow(
-    /*@FloatRange(from = 0.0, to = 100.0)*/
+    /*@FloatRange(from = 0.0, to = 1.0)*/
     progress: Float,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.primary,
